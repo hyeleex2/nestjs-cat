@@ -1,4 +1,5 @@
-import { Controller, Delete, Get, Patch, Post, Put } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
+import { PositiveIntPipe } from 'src/common/pipes/positiveInt.pipe';
 import { CatsService } from './cats.service';
 
 @Controller('cats')
@@ -10,7 +11,8 @@ export class CatsController {
   }
 
   @Get(':id')
-  getOneCat() {
+  // param 으로 들어오는 string 타입을 int로 변경 & validation 체크
+  getOneCat(@Param('id', ParseIntPipe, PositiveIntPipe) param: number) {
     return 'one cat';
   }
 
