@@ -1,42 +1,47 @@
-import { Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
 import { PositiveIntPipe } from 'src/common/pipes/positiveInt.pipe';
 import { CatsService } from './cats.service';
+import { CatRequestDto } from './dto/cats.request.dto';
 
 @Controller('cats')
 @UseInterceptors(SuccessInterceptor)
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
   @Get()
-  getAllCat() {
+  // 현재 로그인한 고양이
+  getCurrentCat() {
     console.log('controller');
     return {
-      cats: 'get all cat api',
+      cats: 'getCurrentCat',
     };
   }
 
-  @Get(':id')
-  // param 으로 들어오는 string 타입을 int로 변경 & validation 체크
-  getOneCat(@Param('id', ParseIntPipe, PositiveIntPipe) param: number) {
-    return 'one cat';
-  }
-
   @Post()
-  createCat() {
-    return 'create cat';
+  async signUp(@Body() body: CatRequestDto) {
+    return await this.catsService.signUp(body);
   }
 
-  @Put(':id')
-  updateCat() {
-    return 'update cat';
-  }
-  @Patch(':id')
-  updatePartialCat() {
-    return 'patch cat';
+  @Post('login')
+  login() {
+    return 'login';
   }
 
-  @Delete(':id')
-  deleteCat() {
-    return 'delete cat';
+  @Post('logout')
+  logout() {
+    return 'logout';
+  }
+
+  @Post('upload/cats')
+  uploadCatImg() {
+    return 'uploadImg';
   }
 }
