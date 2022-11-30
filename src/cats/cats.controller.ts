@@ -7,9 +7,10 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
-import { PositiveIntPipe } from 'src/common/pipes/positiveInt.pipe';
 import { CatsService } from './cats.service';
+import { ReadonlyCatDto } from './dto/cat.dto';
 import { CatRequestDto } from './dto/cats.request.dto';
 
 @Controller('cats')
@@ -25,6 +26,16 @@ export class CatsController {
     };
   }
 
+  @ApiResponse({
+    status: 500,
+    description: 'server error...',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'server success',
+    type: ReadonlyCatDto,
+  })
+  @ApiOperation({ summary: '회원가입' })
   @Post()
   async signUp(@Body() body: CatRequestDto) {
     return await this.catsService.signUp(body);
