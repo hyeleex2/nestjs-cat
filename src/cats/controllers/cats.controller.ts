@@ -54,11 +54,6 @@ export class CatsController {
     return this.authService.jwtLogIn(body);
   }
 
-  @Post('logout')
-  logout() {
-    return 'logout';
-  }
-
   @ApiOperation({ summary: '고양이 이미지 업로드' })
   // FilesInterceptor 의 첫번째 인자는 클라이언트에서 넘겨주는 key 값
   // 두번째 인자 : max count
@@ -70,5 +65,11 @@ export class CatsController {
     @CurrentUser() cat: Cat,
   ) {
     return this.catsService.uploadImg(cat, files);
+  }
+
+  @ApiOperation({ summary: '전체 고양이 가져오기' })
+  @Get('all')
+  getAllCat() {
+    return this.catsService.getAllCat();
   }
 }

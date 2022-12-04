@@ -35,7 +35,10 @@ export class CatsRepository {
     // imgUrl 업데이트
     // db에는 file의 폴더 경로를 저장
     const newCat = await cat.save();
-    console.log(newCat);
     return newCat.readOnlyData;
+  }
+
+  async findAll() {
+    return await this.catModel.find();
   }
 }
