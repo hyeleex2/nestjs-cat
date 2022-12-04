@@ -2,24 +2,23 @@ import {
   Body,
   Controller,
   Get,
-  Param,
-  ParseIntPipe,
   Post,
-  Req,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
-import { CatsService } from './cats.service';
-import { ReadonlyCatDto } from './dto/cat.dto';
-import { CatRequestDto } from './dto/cats.request.dto';
+import { CatsService } from '../services/cats.service';
+import { ReadonlyCatDto } from '../dto/cat.dto';
+import { CatRequestDto } from '../dto/cats.request.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginRequestDto } from 'src/auth/dto/login.request.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
-import { Cat } from './cats.schema';
-import { Request } from 'express';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from 'src/common/utils/multer.options';
+import { Cat } from '../cats.schema';
 @Controller('cats')
 @UseInterceptors(SuccessInterceptor)
 export class CatsController {
@@ -60,8 +59,16 @@ export class CatsController {
     return 'logout';
   }
 
-  @Post('upload/cats')
-  uploadCatImg() {
-    return 'uploadImg';
+  @ApiOperation({ summary: '고양이 이미지 업로드' })
+  // FilesInterceptor 의 첫번째 인자는 클라이언트에서 넘겨주는 key 값
+  // 두번째 인자 : max count
+  @UseInterceptors(FilesInterceptor('image', 10, multerOptions('cats')))
+  @Post('upload')
+  @UseGuards(JwtAuthGuard)
+  uploadCatImg(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @CurrentUser() cat: Cat,
+  ) {
+    return this.catsService.uploadImg(cat, files);
   }
 }
