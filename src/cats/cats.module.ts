@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CatsController } from './cats.controller';
+import { CatsRepository } from './cats.repository';
 import { Cat, CatSchema } from './cats.schema';
 import { CatsService } from './cats.service';
 
@@ -14,6 +15,6 @@ import { CatsService } from './cats.service';
     ]),
   ],
   controllers: [CatsController],
-  providers: [CatsService],
+  providers: [CatsService, CatsRepository],
 })
 export class CatsModule {}
