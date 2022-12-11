@@ -4,8 +4,8 @@ import { Cat } from '../cats.schema';
 export class ReadonlyCatDto extends PickType(Cat, ['email', 'name'] as const) {
   @ApiProperty({
     example: '1212312',
-    description: 'id',
+    description: '_id',
     required: true,
   })
-  id: string;
+  _id: string;
 }

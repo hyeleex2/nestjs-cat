@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { CatsRepository } from 'src/cats/cats.repository';
 import { Comments } from '../comments.schema';
 import { CommentsCreateDto } from '../dtos/comments.create.dto';
@@ -43,6 +43,17 @@ export class CommentsService {
       const comment = await this.commentsModel.findById(id);
       comment.likeCount += 1;
       return await comment.save();
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
+  }
+
+  async getCommentsByCatId(id: string | Types.ObjectId) {
+    try {
+      const comments = await this.commentsModel.find().where({
+        author: new mongoose.Types.ObjectId(id),
+      });
+      return comments;
     } catch (error) {
       return new BadRequestException(error.message);
     }

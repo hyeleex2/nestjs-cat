@@ -1,18 +1,18 @@
-import { Prop, Schema, SchemaFactory, SchemaOptions } from '@nestjs/mongoose';
+import { Comments } from '../comments/comments.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { Document, SchemaOptions } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty } from 'class-validator';
-import { Document, HydratedDocument } from 'mongoose';
-
-export type CatDocument = HydratedDocument<Cat>;
 
 const options: SchemaOptions = {
   timestamps: true,
+  collection: 'cats',
 };
 
 @Schema(options)
 export class Cat extends Document {
   @ApiProperty({
-    example: 'hl.lee@email.com',
+    example: 'amamov@kakao.com',
     description: 'email',
     required: true,
   })
@@ -25,50 +25,65 @@ export class Cat extends Document {
   email: string;
 
   @ApiProperty({
-    example: '1234',
-    description: 'password',
-    required: true,
-  })
-  @Prop({
-    required: false,
-  })
-  @IsNotEmpty()
-  password: string;
-
-  @ApiProperty({
-    example: 'hyelee',
+    example: 'amamov',
     description: 'name',
     required: true,
   })
   @Prop({
-    required: false,
+    required: true,
   })
+  @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsNotEmpty()
-  @Prop({
-    default: `https://raw.githubusercontent.com/amamov/teaching-nestjs-a-to-z/main/images/1.jpeg`,
+  @ApiProperty({
+    example: '23810',
+    description: 'password',
+    required: true,
   })
+  @Prop({
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+
+  @Prop({
+    default:
+      'https://github.com/amamov/NestJS-solid-restapi-boilerplate/raw/main/docs/images/1.jpeg',
+  })
+  @IsString()
   imgUrl: string;
 
-  // db에 존재하는 필드가 아님
+  readonly comments: Comments[];
+
   readonly readOnlyData: {
-    id: string;
+    _id: string;
     email: string;
     name: string;
     imgUrl: string;
+    comments: Comments[];
   };
 }
 
-export const CatSchema = SchemaFactory.createForClass(Cat);
+const _CatSchema = SchemaFactory.createForClass(Cat);
 
-// client에서 보여줄 데이터만 가상으로 필터링해서 나감
-CatSchema.virtual('readOnlyData').get(function (this: Cat) {
+_CatSchema.virtual('comments', {
+  ref: 'Comments',
+  localField: '_id',
+  foreignField: 'info',
+});
+_CatSchema.set('toObject', { virtuals: true });
+_CatSchema.set('toJSON', { virtuals: true });
+
+_CatSchema.virtual('readOnlyData').get(function (this: Cat) {
   return {
-    id: this.id,
+    _id: this._id,
     email: this.email,
     name: this.name,
     imgUrl: this.imgUrl,
+    comments: this.comments,
   };
 });
+
+export const CatSchema = _CatSchema;

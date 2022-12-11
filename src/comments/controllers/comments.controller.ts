@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { CommentsCreateDto } from '../dtos/comments.create.dto';
 import { CommentsService } from '../services/comments.service';
 
@@ -31,5 +32,10 @@ export class CommentsController {
   @Patch(':id')
   async plusLike(@Param('id') id: string) {
     return this.commentsServices.plusLike(id);
+  }
+
+  @Get(':id')
+  async getCommentsByCatId(@Param('id') id: string | Types.ObjectId) {
+    return this.commentsServices.getCommentsByCatId(id);
   }
 }

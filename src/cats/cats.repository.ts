@@ -4,7 +4,8 @@ import { Model, Types } from 'mongoose';
 import { Cat } from './cats.schema';
 import { ReadonlyCatDto } from './dto/cat.dto';
 import { CatRequestDto } from './dto/cats.request.dto';
-
+import * as mongoose from 'mongoose';
+import { CommentsSchema } from 'src/comments/comments.schema';
 @Injectable()
 export class CatsRepository {
   constructor(@InjectModel(Cat.name) private readonly catModel: Model<Cat>) {}
@@ -41,6 +42,8 @@ export class CatsRepository {
   }
 
   async findAll() {
-    return await this.catModel.find();
+    // const CommentsModel = mongoose.model('Comments', CommentsSchema);
+    const result = await this.catModel.find().populate('comments');
+    return result;
   }
 }

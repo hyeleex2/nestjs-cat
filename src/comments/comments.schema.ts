@@ -1,12 +1,11 @@
 import { Prop, Schema, SchemaFactory, SchemaOptions } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
-import { Document, HydratedDocument, Types } from 'mongoose';
-
-export type CommentsDocument = HydratedDocument<Comments>;
+import { Document, Types } from 'mongoose';
 
 const options: SchemaOptions = {
   timestamps: true,
+  collection: 'Comments',
 };
 
 @Schema(options)
@@ -18,7 +17,6 @@ export class Comments extends Document {
   @Prop({
     type: Types.ObjectId,
     required: true,
-    // ref : 어떤 collection이랑 연결해줄지 셋팅
     ref: 'cats',
   })
   @IsNotEmpty()
