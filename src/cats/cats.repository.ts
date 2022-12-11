@@ -42,7 +42,6 @@ export class CatsRepository {
   }
 
   async findAll() {
-    // const CommentsModel = mongoose.model('Comments', CommentsSchema);
     const result = await this.catModel.find().populate('comments');
     return result;
   }
